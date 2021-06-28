@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
-import 'package:instagram_clone/feed.dart';
-import 'package:instagram_clone/post.dart';
-import 'package:instagram_clone/story.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:instagram_clone/pages/feed_tab.dart';
+import 'package:instagram_clone/pages/search_tab.dart';
+import 'package:instagram_clone/pages/user_page.dart';
 
 void main() => runApp(App());
 
@@ -23,11 +23,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var _pages = [
-    Feed(),
-    Feed(),
-    Feed(),
-    Feed(),
-    Feed(),
+    FeedTab(),
+    SearchTab(),
+    Container(),
+    Container(),
+    UserPage(nickname: 'flutter.developers'),
   ];
 
   int currentPage = 0;
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
         leading: IconButton(
           onPressed: () {},
           icon: Icon(
-            Feather.camera,
+            Icons.photo_camera_outlined,
             color: Colors.black,
           ),
         ),
@@ -58,24 +58,23 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             onPressed: () {},
             icon: Icon(
-              Feather.tv,
+              Icons.tv,
               color: Colors.black,
             ),
           ),
           IconButton(
             onPressed: () {},
             icon: Icon(
-              FontAwesome.send_o,
+              FontAwesomeIcons.paperPlane,
               color: Colors.black,
             ),
           ),
         ],
       ),
-
       body: _pages[currentPage],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentPage,
-        onTap: (i){
+        onTap: (i) {
           setState(() {
             currentPage = i;
           });
@@ -86,25 +85,14 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: Colors.black,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Foundation.home),
-            title: Text("Feed")
-          ),
+              icon: Icon(Icons.home_outlined), label: "Feed"),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
           BottomNavigationBarItem(
-            icon: Icon(Feather.search),
-            title: Text("Search")
-          ),
+              icon: Icon(FontAwesomeIcons.plusSquare), label: "Upload"),
           BottomNavigationBarItem(
-            icon: Icon(Feather.plus_square),
-            title: Text("Upload")
-          ),
+              icon: Icon(Icons.favorite_border_outlined), label: "Likes"),
           BottomNavigationBarItem(
-            icon: Icon(Feather.heart),
-            title: Text("Likes")
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Feather.user),
-            title: Text("Account")
-          ),
+              icon: Icon(FontAwesomeIcons.user), label: "Account"),
         ],
       ),
     );
