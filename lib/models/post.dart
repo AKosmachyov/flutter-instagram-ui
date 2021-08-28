@@ -1,4 +1,4 @@
-import 'package:instagram_clone/models/user.dart';
+import './user.dart';
 
 class Post {
   final String postImage;

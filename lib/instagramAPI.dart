@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:instagram_clone/models/post.dart';
-
+import '/models/post.dart';
 import 'models/user.dart';
 
 final String _serverPath = 'www.instagram.com';
@@ -18,7 +17,6 @@ class InstagramAPI {
 
   Future<List<Post>> fetchPosts() async {
     final url = Uri.https(_serverPath, '/p/CIWBNp_pDUf', {'__a': '1'});
-    // return [];
     final Map<String, String> headers = {
       "accept": "*/*",
       "accept-language": "en-GB,en-US;q=0.9,en;q=0.8,ru;q=0.7",
@@ -90,10 +88,16 @@ class InstagramAPI {
   UserPageResponse _parseUserPage(Map<String, dynamic> json) {
     final body = json['graphql']['user'] as Map<String, dynamic>;
 
+    final id = body['id'] as String;
     final username = body['username'] as String;
     final fullName = body['full_name'] as String;
     final userImage = body['profile_pic_url'] as String;
-    final user = User(name: fullName, nickname: username, image: userImage);
+    final user = User(
+      id: id,
+      name: fullName,
+      nickname: username,
+      image: userImage,
+    );
 
     final postCount = body['edge_owner_to_timeline_media']['count'].toString();
     final following = body['edge_follow']['count'].toString();
@@ -101,9 +105,12 @@ class InstagramAPI {
     final stats = UserStats(following, postCount, followers);
 
     final mediaList =
-        body['edge_owner_to_timeline_media']['edges'] as List<dynamic>;
+        body['edge_owner_to_timeline_media'] as Map<String, dynamic>;
+    final imagePageInfo =
+        NextPageInfo.fromJson(mediaList["page_info"] as Map<String, dynamic>);
+    final imageList = mediaList['edges'] as List<dynamic>;
 
-    final posts = mediaList.map((el) {
+    final posts = imageList.map((el) {
       final media = el['node'] as Map<String, dynamic>;
       var caption = '';
       var captionList =
@@ -114,7 +121,7 @@ class InstagramAPI {
       final mediaUrl = media['display_url'] as String;
       return Post(user: user, postImage: mediaUrl, caption: caption);
     }).toList();
-    return UserPageResponse(user, posts, stats);
+    return UserPageResponse(user, posts, stats, imagePageInfo);
   }
 
   Future<List<User>> search(String query) async {
@@ -152,10 +159,11 @@ class InstagramAPI {
 
     final users = body.map((el) {
       final info = el['user'] as Map<String, dynamic>;
+      final id = info['pk'] as String;
       final username = info['username'] as String;
       final fullName = info['full_name'] as String;
       final userImage = info['profile_pic_url'] as String;
-      return User(name: fullName, nickname: username, image: userImage);
+      return User(id: id, name: fullName, nickname: username, image: userImage);
     }).toList();
 
     return users;
@@ -166,6 +174,21 @@ class UserPageResponse {
   final User user;
   final List<Post> posts;
   final UserStats stats;
+  final NextPageInfo pageInfo;
 
-  UserPageResponse(this.user, this.posts, this.stats);
+  const UserPageResponse(this.user, this.posts, this.stats, this.pageInfo);
+}
+
+class NextPageInfo {
+  final bool hasNext;
+  final String endCursor;
+
+  const NextPageInfo(this.hasNext, this.endCursor);
+
+  factory NextPageInfo.fromJson(Map<String, dynamic> json) {
+    final hasNext = json["has_next_page"] as bool;
+    final cursor = json["end_cursor"] as String;
+
+    return NextPageInfo(hasNext, cursor);
+  }
 }

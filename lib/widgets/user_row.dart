@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:instagram_clone/models/user.dart';
+import '/models/user.dart';
 
 class UserRowWidget extends StatelessWidget {
   final User user;

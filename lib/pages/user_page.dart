@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:instagram_clone/InstagramAPI.dart';
-import 'package:instagram_clone/models/user.dart';
-import 'package:instagram_clone/widgets/big_avatar.dart';
-import 'package:instagram_clone/widgets/post_list.dart';
+import '/InstagramAPI.dart';
+import '/models/user.dart';
+import '/widgets/big_avatar.dart';
+import '/widgets/post_list.dart';
 
 class UserPage extends StatefulWidget {
   final String nickname;

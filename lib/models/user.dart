@@ -1,9 +1,14 @@
 class User {
+  final String id;
   final String name;
   final String nickname;
   final String image;
 
-  User({required this.name, required this.nickname, required this.image});
+  User(
+      {required this.id,
+      required this.name,
+      required this.nickname,
+      required this.image});
 }
 
 class UserStats {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:instagram_clone/pages/feed_tab.dart';
-import 'package:instagram_clone/pages/search_tab.dart';
-import 'package:instagram_clone/pages/user_page.dart';
+import '/pages/feed_tab.dart';
+import '/pages/search_tab.dart';
+import '/pages/user_page.dart';
 
 void main() => runApp(App());
 

@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:instagram_clone/instagramAPI.dart';
-import 'package:instagram_clone/models/user.dart';
-import 'package:instagram_clone/pages/user_page.dart';
-import 'package:instagram_clone/widgets/user_row.dart';
+import '/instagramAPI.dart';
+import '/models/user.dart';
+import '/pages/user_page.dart';
+import '/widgets/user_row.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
 class SearchTab extends StatefulWidget {

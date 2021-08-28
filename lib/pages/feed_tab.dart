@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:instagram_clone/models/post.dart';
-import 'package:instagram_clone/models/story.dart';
-import 'package:instagram_clone/widgets/post.dart';
-import 'package:instagram_clone/widgets/post_list.dart';
+import '/models/post.dart';
+import '/models/story.dart';
 
 import '../InstagramAPI.dart';
 
@@ -56,58 +53,6 @@ class _FeedState extends State<FeedTab> {
         "https://images.pexels.com/photos/1832959/pexels-photo-1832959.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
         "Litzy")
   ];
-
-  // List<Post> posts = [
-  //   Post(
-  //       username: "Brianne",
-  //       userImage:
-  //           "https://s3.amazonaws.com/uifaces/faces/twitter/felipecsl/128.jpg",
-  //       postImage:
-  //           "https://images.pexels.com/photos/302769/pexels-photo-302769.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-  //       caption: "Consequatur nihil aliquid omnis consequatur."),
-  //   Post(
-  //       username: "Henri",
-  //       userImage:
-  //           "https://s3.amazonaws.com/uifaces/faces/twitter/kevka/128.jpg",
-  //       postImage:
-  //           "https://images.pexels.com/photos/884979/pexels-photo-884979.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-  //       caption: "Consequatur nihil aliquid omnis consequatur."),
-  //   Post(
-  //       username: "Mariano",
-  //       userImage:
-  //           "https://s3.amazonaws.com/uifaces/faces/twitter/ionuss/128.jpg",
-  //       postImage:
-  //           "https://images.pexels.com/photos/291762/pexels-photo-291762.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-  //       caption: "Consequatur nihil aliquid omnis consequatur."),
-  //   Post(
-  //       username: "Johan",
-  //       userImage:
-  //           "https://s3.amazonaws.com/uifaces/faces/twitter/vinciarts/128.jpg",
-  //       postImage:
-  //           "https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-  //       caption: "Consequatur nihil aliquid omnis consequatur."),
-  //   Post(
-  //       username: "London",
-  //       userImage:
-  //           "https://s3.amazonaws.com/uifaces/faces/twitter/ssiskind/128.jpg",
-  //       postImage:
-  //           "https://images.pexels.com/photos/247298/pexels-photo-247298.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-  //       caption: "Consequatur nihil aliquid omnis consequatur."),
-  //   Post(
-  //       username: "Jada",
-  //       userImage:
-  //           "https://s3.amazonaws.com/uifaces/faces/twitter/areus/128.jpg",
-  //       postImage:
-  //           "https://images.pexels.com/photos/169191/pexels-photo-169191.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-  //       caption: "Consequatur nihil aliquid omnis consequatur."),
-  //   Post(
-  //       username: "Crawford",
-  //       userImage:
-  //           "https://s3.amazonaws.com/uifaces/faces/twitter/oskarlevinson/128.jpg",
-  //       postImage:
-  //           "https://images.pexels.com/photos/1252983/pexels-photo-1252983.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-  //       caption: "Consequatur nihil aliquid omnis consequatur."),
-  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +137,8 @@ class _FeedState extends State<FeedTab> {
               future: futurePosts,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return PostListWidget(snapshot.data!);
+                  // return PostListWidget(posts: snapshot.data!);
+                  return Text("123123");
                 } else if (snapshot.hasError) {
                   return Text("${snapshot.error}");
                 }
