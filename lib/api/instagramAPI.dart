@@ -1,8 +1,9 @@
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
 import '/models/post.dart';
-import 'models/user.dart';
+import '/models/user.dart';
+import 'classes.dart';
 
 final String _serverPath = 'www.instagram.com';
 
@@ -45,10 +46,7 @@ class InstagramAPI {
     final mediaUrl = media['display_url'] as String;
 
     final owner = media['owner'] as Map<String, dynamic>;
-    final username = owner['username'] as String;
-    final fullName = owner['full_name'] as String;
-    final userImage = owner['profile_pic_url'] as String;
-    final user = User(name: fullName, nickname: username, image: userImage);
+    final user = User.fromJson(owner);
 
     var caption = '';
     var captionNode = media['edge_media_to_caption']['edges'][0];
@@ -104,11 +102,14 @@ class InstagramAPI {
     final followers = body['edge_followed_by']['count'].toString();
     final stats = UserStats(following, postCount, followers);
 
-    final mediaList =
-        body['edge_owner_to_timeline_media'] as Map<String, dynamic>;
+    final posts = parsePosts(body['edge_owner_to_timeline_media']);
+    return UserPageResponse(user, stats, posts);
+  }
+
+  PostsWithPagination parsePosts(Map<String, dynamic> json) {
     final imagePageInfo =
-        NextPageInfo.fromJson(mediaList["page_info"] as Map<String, dynamic>);
-    final imageList = mediaList['edges'] as List<dynamic>;
+        NextPageInfo.fromJson(json['page_info'] as Map<String, dynamic>);
+    final imageList = json['edges'] as List<dynamic>;
 
     final posts = imageList.map((el) {
       final media = el['node'] as Map<String, dynamic>;
@@ -119,9 +120,46 @@ class InstagramAPI {
         caption = captionList[0]['node']['text'];
       }
       final mediaUrl = media['display_url'] as String;
+      final owner = media['owner'] as Map<String, dynamic>;
+      final user = User.fromJson(owner);
       return Post(user: user, postImage: mediaUrl, caption: caption);
     }).toList();
-    return UserPageResponse(user, posts, stats, imagePageInfo);
+
+    return PostsWithPagination(posts, imagePageInfo);
+  }
+
+  Future<PostsWithPagination> fetchPostWtihPagination(
+      String id, String after) async {
+    final variableField =
+        '{"id":"' + id + '","first":12,"after":"' + after + '"}';
+    final url = Uri.https(_serverPath, '/graphql/query/', {
+      'query_hash': '8c2a529969ee035a5063f2fc8602a0fd',
+      'variables': variableField
+    });
+
+    final Map<String, String> headers = {
+      "accept": "*/*",
+      "accept-language": "en-GB,en-US;q=0.9,en;q=0.8,ru;q=0.7",
+      "cache-control": "no-cache",
+      "pragma": "no-cache",
+      "sec-fetch-dest": "empty",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-site": "same-origin",
+      "x-ig-app-id": "1217981644879628",
+      "x-ig-www-claim": "hmac.AR3MPxXjUimvDTcb0qs9jxYifzSTVF49sxCV2NyqcG2OB-Cn",
+      "x-requested-with": "XMLHttpRequest"
+    };
+    var response = await http.get(url, headers: headers);
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      final media = json['data']['user']['edge_owner_to_timeline_media']
+          as Map<String, dynamic>;
+      return parsePosts(media);
+      // return _parseUserPage(json);
+    } else {
+      print('Request failed with status: ${response.statusCode}.');
+      throw StateError('Unable to fetch posts');
+    }
   }
 
   Future<List<User>> search(String query) async {
@@ -167,28 +205,5 @@ class InstagramAPI {
     }).toList();
 
     return users;
-  }
-}
-
-class UserPageResponse {
-  final User user;
-  final List<Post> posts;
-  final UserStats stats;
-  final NextPageInfo pageInfo;
-
-  const UserPageResponse(this.user, this.posts, this.stats, this.pageInfo);
-}
-
-class NextPageInfo {
-  final bool hasNext;
-  final String endCursor;
-
-  const NextPageInfo(this.hasNext, this.endCursor);
-
-  factory NextPageInfo.fromJson(Map<String, dynamic> json) {
-    final hasNext = json["has_next_page"] as bool;
-    final cursor = json["end_cursor"] as String;
-
-    return NextPageInfo(hasNext, cursor);
   }
 }

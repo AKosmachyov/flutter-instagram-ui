@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import '/api/instagramAPI.dart';
 import '/models/post.dart';
 import '/models/story.dart';
-
-import '../InstagramAPI.dart';
 
 class FeedTab extends StatefulWidget {
   @override

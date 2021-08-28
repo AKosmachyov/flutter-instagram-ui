@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import '/instagramAPI.dart';
+import '../api/instagramAPI.dart';
 import '/models/user.dart';
 import '/pages/user_page.dart';
 import '/widgets/user_row.dart';

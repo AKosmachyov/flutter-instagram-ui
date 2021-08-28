@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import '/InstagramAPI.dart';
+import '/api/classes.dart';
+import '/api/instagramAPI.dart';
 import '/models/user.dart';
 import '/widgets/big_avatar.dart';
 import '/widgets/post_list.dart';
@@ -52,25 +53,39 @@ class _UserPageState extends State<UserPage> {
   }
 
   Widget builPageBody() {
-    return Container(
-      child: SingleChildScrollView(
-          child: FutureBuilder<UserPageResponse>(
-        future: futurePageContent,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Column(
-              children: <Widget>[
+    return FutureBuilder<UserPageResponse>(
+      future: futurePageContent,
+      builder: (context, snapshot) {
+        List<Widget> content = [
+          const SliverToBoxAdapter(
+              child: Center(child: CircularProgressIndicator()))
+        ];
+        if (snapshot.hasData) {
+          final pageData = snapshot.data!;
+          content = [
+            SliverList(
+                delegate: SliverChildListDelegate(
+              [
                 Divider(),
-                buildUserInfo(snapshot.data!.user, snapshot.data!.stats),
-                PostListWidget(snapshot.data!.posts),
+                buildUserInfo(pageData.user, pageData.stats),
               ],
-            );
-          } else if (snapshot.hasError) {
-            return Text(snapshot.error.toString());
-          }
-          return Center(child: CircularProgressIndicator());
-        },
-      )),
+            )),
+            PostListWidget(
+              posts: pageData.posts.posts,
+              pageInfo: pageData.posts.pageInfo,
+            ),
+          ];
+        } else if (snapshot.hasError) {
+          content = [
+            SliverToBoxAdapter(
+                child: Center(child: Text(snapshot.error.toString())))
+          ];
+        }
+
+        return CustomScrollView(
+          slivers: content,
+        );
+      },
     );
   }
 
@@ -91,7 +106,7 @@ class _UserPageState extends State<UserPage> {
               Padding(
                 padding: EdgeInsets.only(top: 8),
                 child: Text(
-                  user.name,
+                  user.name ?? user.nickname,
                   style: Theme.of(context).textTheme.bodyText2,
                 ),
               )
