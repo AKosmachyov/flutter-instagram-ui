@@ -75,21 +75,26 @@ class _SearchTabState extends State<SearchTab> {
               child: StreamBuilder<List<User>>(
                 stream: _userSearchStream.stream,
                 builder: (context, snapshot) {
+                  if (_terms.length < 2) {
+                    return Center();
+                  }
                   if (snapshot.hasData) {
                     return Column(
                         mainAxisSize: MainAxisSize.min,
                         children: snapshot.data!
                             .map((e) => buildRowResult(e))
                             .toList());
-                  } else if (snapshot.hasError) {
+                  }
+                  if (snapshot.hasError) {
                     return Text("${snapshot.error}");
                   }
 
-                  if (_terms.length < 2) {
-                    return Center();
-                  } else {
-                    return Center(child: CircularProgressIndicator());
-                  }
+                  return Center(
+                    child: Container(
+                      padding: EdgeInsets.all(16),
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
                 },
               )),
         );
@@ -98,18 +103,21 @@ class _SearchTabState extends State<SearchTab> {
   }
 
   Widget buildRowResult(User user) {
-    return GestureDetector(
-      child: UserRowWidget(user),
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => UserPage(
-                nickname: user.nickname,
-                withNavigation: true,
-              ),
-            ));
-      },
+    return Container(
+      padding: EdgeInsets.all(8),
+      child: GestureDetector(
+        child: UserRowWidget(user),
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => UserPage(
+                  nickname: user.nickname,
+                  withNavigation: true,
+                ),
+              ));
+        },
+      ),
     );
   }
 }
