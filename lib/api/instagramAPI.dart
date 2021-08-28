@@ -122,7 +122,16 @@ class InstagramAPI {
       final mediaUrl = media['display_url'] as String;
       final owner = media['owner'] as Map<String, dynamic>;
       final user = User.fromJson(owner);
-      return Post(user: user, postImage: mediaUrl, caption: caption);
+
+      var postDate = (media['taken_at_timestamp'] as int) * 1000;
+      final date = new DateTime.fromMillisecondsSinceEpoch(postDate);
+      final dateWithFormat = DateFormat.yMMMMd().format(date);
+      return Post(
+        user: user,
+        postImage: mediaUrl,
+        caption: caption,
+        date: dateWithFormat,
+      );
     }).toList();
 
     return PostsWithPagination(posts, imagePageInfo);

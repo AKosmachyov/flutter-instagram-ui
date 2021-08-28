@@ -80,50 +80,50 @@ class PostWidget extends StatelessWidget {
             ],
           ),
 
-          Container(
-            width: MediaQuery.of(context).size.width,
-            margin: EdgeInsets.symmetric(
-              horizontal: 14,
-            ),
-            child: RichText(
-              softWrap: true,
-              overflow: TextOverflow.visible,
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: "Liked By ",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  TextSpan(
-                    text: "Sigmund,",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black),
-                  ),
-                  TextSpan(
-                    text: " Yessenia,",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black),
-                  ),
-                  TextSpan(
-                    text: " Dayana",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black),
-                  ),
-                  TextSpan(
-                    text: " and",
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  ),
-                  TextSpan(
-                    text: " 1263 others",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // Container(
+          //   width: MediaQuery.of(context).size.width,
+          //   margin: EdgeInsets.symmetric(
+          //     horizontal: 14,
+          //   ),
+          //   child: RichText(
+          //     softWrap: true,
+          //     overflow: TextOverflow.visible,
+          //     text: TextSpan(
+          //       children: [
+          //         TextSpan(
+          //           text: "Liked By ",
+          //           style: TextStyle(color: Colors.black),
+          //         ),
+          //         TextSpan(
+          //           text: "Sigmund,",
+          //           style: TextStyle(
+          //               fontWeight: FontWeight.bold, color: Colors.black),
+          //         ),
+          //         TextSpan(
+          //           text: " Yessenia,",
+          //           style: TextStyle(
+          //               fontWeight: FontWeight.bold, color: Colors.black),
+          //         ),
+          //         TextSpan(
+          //           text: " Dayana",
+          //           style: TextStyle(
+          //               fontWeight: FontWeight.bold, color: Colors.black),
+          //         ),
+          //         TextSpan(
+          //           text: " and",
+          //           style: TextStyle(
+          //             color: Colors.black,
+          //           ),
+          //         ),
+          //         TextSpan(
+          //           text: " 1263 others",
+          //           style: TextStyle(
+          //               fontWeight: FontWeight.bold, color: Colors.black),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
 
           // caption
           Container(
@@ -158,7 +158,7 @@ class PostWidget extends StatelessWidget {
             ),
             alignment: Alignment.topLeft,
             child: Text(
-              "Febuary 2020",
+              post.date,
               textAlign: TextAlign.start,
               style: TextStyle(
                 color: Colors.grey,
