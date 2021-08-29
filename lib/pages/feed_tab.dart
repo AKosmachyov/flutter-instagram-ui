@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import '/api/classes.dart';
+import '/widgets/post_list.dart';
 import '/api/instagramAPI.dart';
-import '/models/post.dart';
 import '/models/story.dart';
 
 class FeedTab extends StatefulWidget {
@@ -9,12 +10,12 @@ class FeedTab extends StatefulWidget {
 }
 
 class _FeedState extends State<FeedTab> {
-  late Future<List<Post>> futurePosts;
+  late Future<PostsWithPagination> futurePosts;
 
   @override
   void initState() {
     super.initState();
-    futurePosts = InstagramAPI().fetchPosts();
+    futurePosts = InstagramAPI().fetchVisualArtsPosts();
   }
 
   List<Story> _stories = [
@@ -55,99 +56,115 @@ class _FeedState extends State<FeedTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Divider(),
-            Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: 20,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "Stories",
-                    style: TextStyle(
-                      fontSize: 14,
-                    ),
-                  ),
-                  Text(
-                    "Watch All",
-                    style: TextStyle(
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.symmetric(
-                vertical: 10,
-              ),
-              height: 110,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
-                children: _stories.map((story) {
-                  return Column(
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: 15,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(70),
-                          border: Border.all(
-                            width: 3,
-                            color: Color(0xFF8e44ad),
-                          ),
-                        ),
-                        child: Container(
-                          padding: EdgeInsets.all(
-                            2,
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(70),
-                            child: Image(
-                              image: NetworkImage(story.image),
-                              width: 70,
-                              height: 70,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(story.name),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
-
-            // posts
-
-            FutureBuilder<List<Post>>(
-              future: futurePosts,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  // return PostListWidget(posts: snapshot.data!);
-                  return Text("123123");
-                } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
-                }
-                // By default, show a loading spinner.
-                return CircularProgressIndicator();
+    return FutureBuilder<PostsWithPagination>(
+      future: futurePosts,
+      builder: (context, snapshot) {
+        List<Widget> content = [
+          const SliverToBoxAdapter(
+              child: Center(child: CircularProgressIndicator()))
+        ];
+        if (snapshot.hasData) {
+          final pageData = snapshot.data!;
+          content = [
+            SliverToBoxAdapter(child: Divider()),
+            PostListWidget(
+              posts: pageData.posts,
+              pageInfo: pageData.pageInfo,
+              loadMore: (String token) {
+                return InstagramAPI().fetchVisualArtsPosts(rankToken: token);
               },
-            )
-          ],
-        ),
-      ),
+            ),
+          ];
+        } else if (snapshot.hasError) {
+          content = [
+            SliverToBoxAdapter(
+                child: Center(child: Text(snapshot.error.toString())))
+          ];
+        }
+
+        return CustomScrollView(
+          slivers: content,
+        );
+      },
     );
+
+    //   return Container(
+    //     child: SingleChildScrollView(
+    //       child: Column(
+    //         children: <Widget>[
+    //           Divider(),
+    //           Container(
+    //             margin: EdgeInsets.symmetric(
+    //               horizontal: 20,
+    //             ),
+    //             child: Row(
+    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //               children: <Widget>[
+    //                 Text(
+    //                   "Stories",
+    //                   style: TextStyle(
+    //                     fontSize: 14,
+    //                   ),
+    //                 ),
+    //                 Text(
+    //                   "Watch All",
+    //                   style: TextStyle(
+    //                     fontSize: 14,
+    //                   ),
+    //                 ),
+    //               ],
+    //             ),
+    //           ),
+    //           Container(
+    //             width: MediaQuery.of(context).size.width,
+    //             margin: EdgeInsets.symmetric(
+    //               vertical: 10,
+    //             ),
+    //             height: 110,
+    //             child: ListView(
+    //               scrollDirection: Axis.horizontal,
+    //               shrinkWrap: true,
+    //               children: _stories.map((story) {
+    //                 return Column(
+    //                   children: <Widget>[
+    //                     Container(
+    //                       margin: EdgeInsets.symmetric(
+    //                         horizontal: 15,
+    //                       ),
+    //                       decoration: BoxDecoration(
+    //                         borderRadius: BorderRadius.circular(70),
+    //                         border: Border.all(
+    //                           width: 3,
+    //                           color: Color(0xFF8e44ad),
+    //                         ),
+    //                       ),
+    //                       child: Container(
+    //                         padding: EdgeInsets.all(
+    //                           2,
+    //                         ),
+    //                         child: ClipRRect(
+    //                           borderRadius: BorderRadius.circular(70),
+    //                           child: Image(
+    //                             image: NetworkImage(story.image),
+    //                             width: 70,
+    //                             height: 70,
+    //                             fit: BoxFit.cover,
+    //                           ),
+    //                         ),
+    //                       ),
+    //                     ),
+    //                     SizedBox(
+    //                       height: 10,
+    //                     ),
+    //                     Text(story.name),
+    //                   ],
+    //                 );
+    //               }).toList(),
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   );
   }
 }

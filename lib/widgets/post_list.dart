@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:instagram_clone/api/instagramAPI.dart';
 import '/api/classes.dart';
 import '/widgets/post.dart';
 import '/models/post.dart';
@@ -8,11 +7,13 @@ import '/models/post.dart';
 class PostListWidget extends StatefulWidget {
   final List<Post> posts;
   final NextPageInfo? pageInfo;
+  final Future<PostsWithPagination> Function(String nextCursor)? loadMore;
 
   PostListWidget({
     Key? key,
     required this.posts,
     this.pageInfo,
+    this.loadMore,
   }) : super(key: key);
 
   @override
@@ -31,20 +32,16 @@ class _PostListWidgetState extends State<PostListWidget> {
   }
 
   _fetchNextPage() {
-    if (nextCursor == null) {
+    if (nextCursor == null && widget.loadMore != null) {
       return;
     }
-    InstagramAPI()
-        .fetchPostWithPagination(
-      widget.posts.first.user.id,
-      nextCursor!,
-    )
-        .then((value) {
-      setState(() {
+
+    widget.loadMore!(nextCursor!).then(
+      (value) => setState(() {
         renderPosts.addAll(value.posts);
         nextCursor = value.pageInfo.endCursor;
-      });
-    });
+      }),
+    );
   }
 
   @override
