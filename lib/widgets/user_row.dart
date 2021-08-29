@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import '/widgets/small_avatar.dart';
 import '/models/user.dart';
 
 class UserRowWidget extends StatelessWidget {
@@ -13,15 +14,7 @@ class UserRowWidget extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              ClipRRect(
-                borderRadius: BorderRadius.circular(40),
-                child: Image(
-                  image: NetworkImage(user.image),
-                  width: 40,
-                  height: 40,
-                  fit: BoxFit.cover,
-                ),
-              ),
+              SmallAvatarWidget(user.image),
               SizedBox(
                 width: 10,
               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '/widgets/small_avatar.dart';
 
 import '../models/post.dart';
 
@@ -25,15 +26,7 @@ class PostWidget extends StatelessWidget {
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(40),
-                      child: Image(
-                        image: NetworkImage(post.user.image),
-                        width: 40,
-                        height: 40,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                    SmallAvatarWidget(post.user.image),
                     SizedBox(
                       width: 10,
                     ),

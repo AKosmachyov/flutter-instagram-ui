@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'dart:convert';
 
 import '/models/post.dart';
@@ -86,27 +87,18 @@ class InstagramAPI {
   UserPageResponse _parseUserPage(Map<String, dynamic> json) {
     final body = json['graphql']['user'] as Map<String, dynamic>;
 
-    final id = body['id'] as String;
-    final username = body['username'] as String;
-    final fullName = body['full_name'] as String;
-    final userImage = body['profile_pic_url'] as String;
-    final user = User(
-      id: id,
-      name: fullName,
-      nickname: username,
-      image: userImage,
-    );
+    final user = User.fromJson(body);
 
     final postCount = body['edge_owner_to_timeline_media']['count'].toString();
     final following = body['edge_follow']['count'].toString();
     final followers = body['edge_followed_by']['count'].toString();
     final stats = UserStats(following, postCount, followers);
 
-    final posts = parsePosts(body['edge_owner_to_timeline_media']);
+    final posts = parsePosts(body['edge_owner_to_timeline_media'], user: user);
     return UserPageResponse(user, stats, posts);
   }
 
-  PostsWithPagination parsePosts(Map<String, dynamic> json) {
+  PostsWithPagination parsePosts(Map<String, dynamic> json, {User? user}) {
     final imagePageInfo =
         NextPageInfo.fromJson(json['page_info'] as Map<String, dynamic>);
     final imageList = json['edges'] as List<dynamic>;
@@ -121,13 +113,13 @@ class InstagramAPI {
       }
       final mediaUrl = media['display_url'] as String;
       final owner = media['owner'] as Map<String, dynamic>;
-      final user = User.fromJson(owner);
+      final postUser = user ?? User.fromJson(owner);
 
       var postDate = (media['taken_at_timestamp'] as int) * 1000;
       final date = new DateTime.fromMillisecondsSinceEpoch(postDate);
       final dateWithFormat = DateFormat.yMMMMd().format(date);
       return Post(
-        user: user,
+        user: postUser,
         postImage: mediaUrl,
         caption: caption,
         date: dateWithFormat,
@@ -137,7 +129,7 @@ class InstagramAPI {
     return PostsWithPagination(posts, imagePageInfo);
   }
 
-  Future<PostsWithPagination> fetchPostWtihPagination(
+  Future<PostsWithPagination> fetchPostWithPagination(
       String id, String after) async {
     final variableField =
         '{"id":"' + id + '","first":12,"after":"' + after + '"}';
@@ -164,7 +156,6 @@ class InstagramAPI {
       final media = json['data']['user']['edge_owner_to_timeline_media']
           as Map<String, dynamic>;
       return parsePosts(media);
-      // return _parseUserPage(json);
     } else {
       print('Request failed with status: ${response.statusCode}.');
       throw StateError('Unable to fetch posts');

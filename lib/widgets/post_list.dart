@@ -35,7 +35,7 @@ class _PostListWidgetState extends State<PostListWidget> {
       return;
     }
     InstagramAPI()
-        .fetchPostWtihPagination(
+        .fetchPostWithPagination(
       widget.posts.first.user.id,
       nextCursor!,
     )

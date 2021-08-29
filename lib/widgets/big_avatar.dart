@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BigAvatarWidget extends StatelessWidget {
-  final String url;
+  final String? url;
   BigAvatarWidget(this.url);
 
   @override
@@ -12,7 +12,15 @@ class BigAvatarWidget extends StatelessWidget {
       child: Stack(
         children: <Widget>[
           Positioned.fill(
-              child: CircleAvatar(backgroundImage: NetworkImage(url))),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(40),
+              child: FadeInImage(
+                image: NetworkImage(url ?? ''),
+                placeholder: AssetImage("assets/placeholder.png"),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
           Positioned(
             child: ClipOval(
               child: Container(
